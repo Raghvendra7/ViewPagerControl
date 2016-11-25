@@ -175,6 +175,14 @@ class ViewPagerControl: UIControl {
         default:
             addButtons(forItems: items)
         }
+        self.layer.masksToBounds = false
+        let shadowPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: 2)
+        self.backgroundColor = UIColor.white
+        self.layer.shadowColor = UIColor.black.cgColor
+        self.layer.shadowOffset = CGSize(width: 0, height: 1);
+        self.layer.shadowOpacity = 0.3
+        self.layer.shadowPath = shadowPath.cgPath
+
         
     }
     

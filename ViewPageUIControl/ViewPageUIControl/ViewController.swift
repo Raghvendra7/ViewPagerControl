@@ -36,7 +36,7 @@ var data = ["One","Two","Three"]
         tabView = ViewPagerControl(images: image2, selectedImage: image1)
             //ViewPagerControl(items: data)
         tabView.type = .image
-        tabView.frame = CGRect(x: 0, y: 64, width: ScreenConstant.width, height: 60)
+        tabView.frame = CGRect(x: 0, y: ScreenConstant.height - 60, width: ScreenConstant.width, height: 60)
         
         
         tabView.selectionIndicatorColor = UIColor.white
