@@ -19,9 +19,10 @@ struct ScreenConstant {
 class ViewController: UIViewController {
 var data = ["One","Two","Three"]
     
-    
+    var image1 = ["add_selected","list_selected","location_selected","search_selected"]
+    var image2 = ["add_unselected","list_unselected","location_unselected","search_unselected"]
     @IBOutlet weak var pageLabel: UILabel!
-    
+    var tabView:ViewPagerControl!
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -31,13 +32,17 @@ var data = ["One","Two","Three"]
 
     
     func createViewPager(){
-        let tabView = ViewPagerControl(items: data)
+        
+        tabView = ViewPagerControl(images: image2, selectedImage: image1)
+            //ViewPagerControl(items: data)
+        tabView.type = .image
         tabView.frame = CGRect(x: 0, y: 64, width: ScreenConstant.width, height: 60)
-        tabView.selectionIndicatorColor = UIColor.blue
+        
+        
+        tabView.selectionIndicatorColor = UIColor.white
+        //tabView.showSelectionIndication = false
         self.view.addSubview(tabView)
         
-        
-        segmentControl(index: tabView.selectedSegmentIndex)
         tabView.indexChangedHandler = { index in
             
             self.segmentControl(index: index)
@@ -47,8 +52,12 @@ var data = ["One","Two","Three"]
     
     
     func segmentControl(index:Int){
-        pageLabel.text = data[index]
+        //pageLabel.text = data[index]
         print(index)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        tabView.setSelectedSegmentIndex(1, animated: false)
     }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()

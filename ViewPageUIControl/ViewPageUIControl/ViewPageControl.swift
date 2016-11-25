@@ -20,6 +20,11 @@ class ViewPagerControl: UIControl {
         case dynamic // Selection indicator is equal to the segment's label width.
         case fixed // Selection indicator is equal to the full width of the segment.
     }
+    enum ViewPagerType{
+        case text
+        case image
+        case textImage
+    }
     
     var stackView: UIStackView = {
         let stackView = UIStackView()
@@ -39,7 +44,10 @@ class ViewPagerControl: UIControl {
     
     var selectionIndicatorLeadingConstraint: NSLayoutConstraint?
     var selectionIndicatorWidthConstraint: NSLayoutConstraint?
-    var items: [String]
+    var items: [String] = []
+    var buttonImage:[String] = []
+    var selectedButtonImage:[String] = []
+    var showSelectionIndication = true
     
     /// Height of the selection indicator stripe.
     var selectionIndicatorHeight: CGFloat = 5.0
@@ -48,6 +56,8 @@ class ViewPagerControl: UIControl {
     
     /// Position of the selection indicator stripe.
     var selectionIndicatorPosition: SelectionIndicatorPosition = .bottom
+    
+    var type:ViewPagerType = .text
     
     /// Color of the selection indicator stripe.
     var selectionIndicatorColor: UIColor = .black {
@@ -90,12 +100,20 @@ class ViewPagerControl: UIControl {
     
     init(items: [String]) {
         self.items = items
+        self.type = ViewPagerType.text
         
         super.init(frame: CGRect.zero)
     }
     
+    init(images:[String],selectedImage:[String]){
+        self.items = images
+        self.selectedButtonImage = selectedImage
+        self.type = ViewPagerType.text
+        super.init(frame: CGRect.zero)
+    }
+    
     required init?(coder aDecoder: NSCoder) {
-        self.items = []
+        //self.items = []
         
         super.init(coder: aDecoder)
     }
@@ -141,10 +159,23 @@ class ViewPagerControl: UIControl {
     
     override func willMove(toSuperview newSuperview: UIView?) {
         addSubview(stackView)
-        addSubview(selectionIndicator)
-        bringSubview(toFront: selectionIndicator)
+        if showSelectionIndication{
+            addSubview(selectionIndicator)
+        }
         
-        addButtons(forItems: items)
+        bringSubview(toFront: selectionIndicator)
+        switch type {
+        case .text:
+            addButtons(forItems: items)
+            
+        case .image:
+            addButtons(forImage:items,forselectImage:selectedButtonImage)
+        case .textImage:
+            break
+        default:
+            addButtons(forItems: items)
+        }
+        
     }
     
     func addButtons(forItems items: [String]) {
@@ -153,6 +184,29 @@ class ViewPagerControl: UIControl {
             stackView.addArrangedSubview(buttonView)
         }
     }
+    
+    func addButtons (forImage:[String],forselectImage:[String]){
+        for (index, item) in forImage.enumerated() {
+            let buttonView = button(forImage: item, atIndex: index)
+            stackView.addArrangedSubview(buttonView)
+        }
+    }
+    
+    
+    func button(forImage item: String, atIndex index: Int) -> UIButton {
+        let button = UIButton()
+        button.setImage(UIImage(named: item)
+, for: UIControlState.normal)
+        button.setImage(UIImage(named: selectedButtonImage[index]) ,for: .selected)
+        button.addTarget(self, action: #selector(ViewPagerControl.tapped(segmentButton:)), for: .touchUpInside)
+        // TODO: Set button title text attributes to a dictionary property set by the developer
+        button.tag = index
+        return button
+        
+        
+    }
+
+    
     
     func button(forItem item: String, atIndex index: Int) -> UIButton {
         let button = UIButton()
